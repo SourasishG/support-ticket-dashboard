@@ -12,6 +12,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { stripHtml, isSafeUrl, isRtlText } from "@/lib/sanitize";
 import { getDeadlineInfo } from "@/lib/deadline";
 import { PRIORITIES, CATEGORIES, TRANSITIONS, AGENTS } from "@/lib/rules";
+import { fetchWithRetryAsync } from "@/lib/useFetchWithRetry";
 
 const PRIORITY_BADGES = {
   P0: "bg-red-500/15 text-red-400 border-red-500/30",
@@ -70,22 +71,16 @@ export default function TicketDetailPage({ params }) {
     try {
       setLoading(true);
       setError(null);
-      const res = await fetch(`/api/tickets/${encodeURIComponent(id)}`);
-      if (!res.ok) {
-        if (res.status === 404) {
-          setError("Ticket not found.");
-        } else {
-          setError(`Failed to load ticket (${res.status})`);
-        }
-        setLoading(false);
-        return;
-      }
-      const data = await res.json();
+      const data = await fetchWithRetryAsync(`/api/tickets/${encodeURIComponent(id)}`);
       setTicket(data);
       setNewCategory(data.category);
       setNewPriority(data.priority);
     } catch (err) {
-      setError("Network error fetching ticket details.");
+      if ((err.message || "").includes("404")) {
+        setError("Ticket not found.");
+      } else {
+        setError(err.message || "Failed to load ticket.");
+      }
     } finally {
       setLoading(false);
     }
@@ -108,22 +103,21 @@ export default function TicketDetailPage({ params }) {
       setActionError(null);
       setActionSuccess(null);
 
-      const res = await fetch(`/api/tickets/${encodeURIComponent(id)}/claim`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ agent_id: activeAgentId }),
-      });
+      const data = await fetchWithRetryAsync(
+        `/api/tickets/${encodeURIComponent(id)}/claim`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ agent_id: activeAgentId }),
+          retryOnConflict: true,
+        }
+      );
 
-      const data = await res.json();
-
-      if (!res.ok) {
-        setActionError(data.error || data.message || "Failed to claim ticket.");
-      } else {
-        setTicket(data.ticket);
-        setActionSuccess(`Ticket successfully claimed by ${activeAgentId}!`);
-      }
+      const updated = data.ticket || data;
+      setTicket(updated);
+      setActionSuccess(`Ticket successfully claimed by ${activeAgentId}!`);
     } catch (err) {
-      setActionError("Network error while claiming ticket.");
+      setActionError(err.message || "Failed to claim ticket.");
     } finally {
       setClaiming(false);
     }
@@ -136,22 +130,20 @@ export default function TicketDetailPage({ params }) {
       setActionError(null);
       setActionSuccess(null);
 
-      const res = await fetch(`/api/tickets/${encodeURIComponent(id)}/status`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status: nextStatus }),
-      });
+      const data = await fetchWithRetryAsync(
+        `/api/tickets/${encodeURIComponent(id)}/status`,
+        {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ status: nextStatus }),
+        }
+      );
 
-      const data = await res.json();
-
-      if (!res.ok) {
-        setActionError(data.error || data.message || "Status update failed.");
-      } else {
-        setTicket(data.ticket);
-        setActionSuccess(`Status changed to ${nextStatus}.`);
-      }
+      const updated = data.ticket || data;
+      setTicket(updated);
+      setActionSuccess(`Status changed to ${nextStatus}.`);
     } catch (err) {
-      setActionError("Network error updating status.");
+      setActionError(err.message || "Network error updating status.");
     } finally {
       setUpdatingStatus(false);
     }
@@ -176,27 +168,25 @@ export default function TicketDetailPage({ params }) {
 
     try {
       setSavingTriage(true);
-      const res = await fetch(`/api/tickets/${encodeURIComponent(id)}/triage`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          action: triageAction,
-          category: triageAction === "change" ? newCategory : ticket.category,
-          priority: triageAction === "change" ? newPriority : ticket.priority,
-          reason: triageAction === "change" ? triageReason : "Accepted original triage",
-        }),
-      });
+      const data = await fetchWithRetryAsync(
+        `/api/tickets/${encodeURIComponent(id)}/triage`,
+        {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            action: triageAction,
+            category: triageAction === "change" ? newCategory : ticket.category,
+            priority: triageAction === "change" ? newPriority : ticket.priority,
+            reason: triageAction === "change" ? triageReason : "Accepted original triage",
+          }),
+        }
+      );
 
-      const data = await res.json();
-
-      if (!res.ok) {
-        setActionError(data.error || data.message || "Triage update failed.");
-      } else {
-        setTicket(data.ticket);
-        setActionSuccess("Triage review submitted successfully.");
-      }
+      const updated = data.ticket || data;
+      setTicket(updated);
+      setActionSuccess("Triage review submitted successfully.");
     } catch (err) {
-      setActionError("Network error saving triage review.");
+      setActionError(err.message || "Network error saving triage review.");
     } finally {
       setSavingTriage(false);
     }
@@ -209,20 +199,18 @@ export default function TicketDetailPage({ params }) {
       setActionError(null);
       setActionSuccess(null);
 
-      const res = await fetch(`/api/tickets/${encodeURIComponent(id)}/retriage`, {
-        method: "POST",
-      });
+      const data = await fetchWithRetryAsync(
+        `/api/tickets/${encodeURIComponent(id)}/retriage`,
+        {
+          method: "POST",
+        }
+      );
 
-      const data = await res.json();
-
-      if (!res.ok) {
-        setActionError(data.error || data.message || "AI re-triage failed.");
-      } else {
-        setTicket(data.ticket);
-        setActionSuccess("AI re-triage completed successfully.");
-      }
+      const updated = data.ticket || data;
+      setTicket(updated);
+      setActionSuccess("AI re-triage completed successfully.");
     } catch (err) {
-      setActionError("Network error calling AI re-triage.");
+      setActionError(err.message || "Network error calling AI re-triage.");
     } finally {
       setRetriaging(false);
     }
@@ -428,13 +416,13 @@ export default function TicketDetailPage({ params }) {
             )}
 
             {/* Data Flags */}
-            {ticket.flags && ticket.flags.length > 0 && (
+            {(ticket.data_flags || ticket.flags) && (ticket.data_flags || ticket.flags).length > 0 && (
               <div className="border-t border-border/40 pt-4 space-y-2">
                 <h3 className="text-xs font-medium uppercase tracking-wider text-amber-400 flex items-center gap-1.5">
-                  <span>🚩</span> Data Quality Flags ({ticket.flags.length})
+                  <span>🚩</span> Data Quality Flags ({(ticket.data_flags || ticket.flags).length})
                 </h3>
                 <div className="flex flex-wrap gap-2">
-                  {ticket.flags.map((flag) => (
+                  {(ticket.data_flags || ticket.flags).map((flag) => (
                     <Badge
                       key={flag}
                       className="bg-amber-500/10 text-amber-400 border-amber-500/30 font-mono text-[11px]"

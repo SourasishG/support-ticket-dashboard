@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, Suspense } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { setCounts } from "@/store/counterSlice";
-import { useFetchWithRetry } from "@/lib/useFetchWithRetry";
+import { useFetchWithRetry, fetchWithRetryAsync } from "@/lib/useFetchWithRetry";
 import { useFilterSync } from "@/lib/useFilterSync";
 import { useLiveUpdates } from "@/lib/useLiveUpdates";
 import DashboardHeader from "@/components/DashboardHeader";
@@ -60,17 +60,19 @@ function TicketDashboard() {
     const loadCounts = async () => {
       try {
         const [myData, reviewData] = await Promise.all([
-          fetch(`/api/tickets?status=in_progress&limit=1`).then((r) => r.json()),
-          fetch(`/api/tickets?triage_decision=manual_review&limit=1`).then((r) => r.json()),
+          fetchWithRetryAsync(`/api/tickets?status=in_progress&limit=1`),
+          fetchWithRetryAsync(`/api/tickets?triage_decision=manual_review&limit=1`),
         ]);
-        dispatch(
-          setCounts({
-            myTicketsCount: myData.total || 0,
-            toReviewCount: reviewData.total || 0,
-          })
-        );
+        if (myData && reviewData) {
+          dispatch(
+            setCounts({
+              myTicketsCount: myData.total || 0,
+              toReviewCount: reviewData.total || 0,
+            })
+          );
+        }
       } catch {
-        // ignore count errors
+        // ignore count errors after retries
       }
     };
     loadCounts();

@@ -6,6 +6,8 @@ import TicketTable from "@/components/TicketTable";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
+import { fetchWithRetryAsync } from "@/lib/useFetchWithRetry";
+
 export default function ReviewPage() {
   const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -17,11 +19,10 @@ export default function ReviewPage() {
   const fetchReviewTickets = async (p = 1) => {
     setLoading(true);
     try {
-      const res = await fetch(
+      const data = await fetchWithRetryAsync(
         `/api/tickets?triage_decision=manual_review&page=${p}&limit=20`
       );
-      if (res.ok) {
-        const data = await res.json();
+      if (data) {
         setTickets(data.items || []);
         setTotal(data.total || 0);
         setPage(data.page || 1);
