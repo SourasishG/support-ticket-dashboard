@@ -99,14 +99,21 @@ frontend/
 │   ├── review/page.js          # Manual Triage Review Queue page
 │   ├── tickets/
 │   │   ├── page.js             # Main Tickets Dashboard page
-│   │   └── [id]/page.js        # Ticket Detail page
-│   ├── layout.js               # Root layout with StoreProvider & dark theme
+│   │   └── [id]/page.js        # Ticket Detail Orchestrator page
+│   ├── layout.js               # Root layout with StoreProvider & Light theme
 │   └── page.js                 # Redirects to /tickets
 ├── components/                 # React UI Components
 │   ├── DashboardHeader.js      # Header with Agent Picker & live counters
 │   ├── FilterBar.js            # Search input & 4 filter dropdowns
 │   ├── TicketTable.js          # Table component with deadline countdowns
 │   ├── LiveBanner.js           # Animated notification banner for updates
+│   ├── ticket-detail/          # Modular Sub-components for Ticket Detail Page
+│   │   ├── TicketBodyCard.js   # Title, RTL script, AI summary & attachment guard
+│   │   ├── TicketTriageCard.js # Manual triage review form
+│   │   ├── TicketClaimCard.js  # Agent assignment & claim button
+│   │   ├── TicketSlaCard.js    # Live SLA countdown timer & progress bar
+│   │   ├── TicketStatusCard.js # Status state machine transition buttons
+│   │   └── TicketMetaCard.js   # Customer plan, priority & metadata badges
 │   └── ui/                     # shadcn/ui components (badge, button, select, table)
 ├── lib/                        # Domain Core & Utility Functions
 │   ├── db.js                   # In-memory store with 5,000 synthetic + 12 test tickets
@@ -120,7 +127,7 @@ frontend/
 │   └── useLiveUpdates.js       # Background updates polling hook
 ├── store/                      # Redux Toolkit State Management
 │   ├── index.js                # Store configuration
-│   ├── StoreProvider.js        # Client store provider
+│   ├── StoreProvider.js        # Client store provider (React 19 compliant)
 │   ├── agentSlice.js           # Active agent identity & localStorage persistence
 │   ├── filterSlice.js          # Active dashboard search & filter state
 │   └── counterSlice.js         # Live badge counter tracking

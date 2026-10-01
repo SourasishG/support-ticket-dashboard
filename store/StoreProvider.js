@@ -1,20 +1,19 @@
 "use client";
 
-import { useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Provider } from "react-redux";
 import { makeStore } from "@/store";
 import { hydrateAgent } from "@/store/agentSlice";
 
 export default function StoreProvider({ children }) {
-  const storeRef = useRef(null);
-  if (!storeRef.current) {
-    storeRef.current = makeStore();
-  }
+  // Standard React 19 pattern: initialize store once lazily in useState
+  const [store] = useState(() => makeStore());
 
   useEffect(() => {
-    storeRef.current.dispatch(hydrateAgent());
-  }, []);
+    store.dispatch(hydrateAgent());
+  }, [store]);
 
-  return <Provider store={storeRef.current}>{children}</Provider>;
+  return <Provider store={store}>{children}</Provider>;
 }
+
 
