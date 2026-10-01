@@ -27,11 +27,11 @@ export default function DashboardHeader() {
   const currentValue = mounted ? activeAgentId : "agent-1";
 
   return (
-    <header className="sticky top-0 z-50 border-b border-border/40 bg-background/80 backdrop-blur-xl supports-[backdrop-filter]:bg-background/60">
+    <header className="sticky top-0 z-50 border-b border-[#f4aeba] bg-white/90 backdrop-blur-md shadow-xs">
       <div className="mx-auto flex h-16 max-w-[1600px] items-center justify-between gap-4 px-6">
         {/* Left: Branding */}
         <Link href="/tickets" className="flex items-center gap-3 group">
-          <div className="relative flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-violet-500 to-indigo-600 shadow-lg shadow-violet-500/25 transition-shadow group-hover:shadow-violet-500/40">
+          <div className="relative flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-[#c54c82] to-[#ec729c] shadow-md shadow-[#c54c82]/30 transition-all group-hover:scale-105">
             <svg
               className="h-5 w-5 text-white"
               fill="none"
@@ -46,22 +46,22 @@ export default function DashboardHeader() {
               />
             </svg>
           </div>
-          <span className="text-lg font-semibold tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+          <span className="text-lg font-bold tracking-tight text-[#0f172a]">
             Support Dashboard
           </span>
         </Link>
 
         {/* Centre: Quick counts */}
         <div className="hidden md:flex items-center gap-3">
-          <Link href="/tickets?status=in_progress" className="flex items-center gap-2 rounded-lg border border-border/50 px-3 py-1.5 text-sm transition-colors hover:bg-accent">
-            <span className="text-muted-foreground">My Tickets</span>
-            <Badge variant="secondary" className="tabular-nums" suppressHydrationWarning>
+          <Link href="/tickets?status=in_progress" className="flex items-center gap-2 rounded-lg border border-[#f4aeba] bg-white px-3 py-1.5 text-sm font-medium text-[#0f172a] transition-colors hover:bg-[#f4aeba]/20">
+            <span>My Tickets</span>
+            <Badge className="bg-[#c54c82] text-white tabular-nums" suppressHydrationWarning>
               {myTicketsCount}
             </Badge>
           </Link>
-          <Link href="/tickets?triage_decision=manual_review" className="flex items-center gap-2 rounded-lg border border-amber-500/30 bg-amber-500/5 px-3 py-1.5 text-sm transition-colors hover:bg-amber-500/10">
-            <span className="text-amber-400">To Review</span>
-            <Badge className="bg-amber-500/20 text-amber-400 hover:bg-amber-500/30 tabular-nums" suppressHydrationWarning>
+          <Link href="/tickets?triage_decision=manual_review" className="flex items-center gap-2 rounded-lg border border-[#c54c82]/40 bg-[#fdfdcb] px-3 py-1.5 text-sm font-medium text-[#0f172a] transition-colors hover:bg-[#fdfdcb]/80">
+            <span>To Review</span>
+            <Badge className="bg-[#ec729c] text-white tabular-nums" suppressHydrationWarning>
               {toReviewCount}
             </Badge>
           </Link>
@@ -69,17 +69,17 @@ export default function DashboardHeader() {
 
         {/* Right: Agent picker */}
         <div className="flex items-center gap-3">
-          <span className="hidden sm:inline text-sm text-muted-foreground">Viewing&nbsp;as</span>
+          <span className="hidden sm:inline text-sm font-medium text-[#64748b]">Viewing&nbsp;as</span>
           <Select
             value={currentValue}
             onValueChange={(val) => dispatch(setActiveAgent(val))}
           >
-            <SelectTrigger id="agent-picker" className="w-[140px] h-9" suppressHydrationWarning>
+            <SelectTrigger id="agent-picker" className="w-[140px] h-9 border-[#f4aeba] bg-white text-[#0f172a] font-medium" suppressHydrationWarning>
               <SelectValue />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="bg-white border-[#f4aeba]">
               {AGENTS.map((a) => (
-                <SelectItem key={a.id} value={a.id}>
+                <SelectItem key={a.id} value={a.id} className="text-[#0f172a] focus:bg-[#f4aeba]/20 focus:text-[#c54c82]">
                   {a.name} ({a.id})
                 </SelectItem>
               ))}

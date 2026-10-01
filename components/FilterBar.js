@@ -22,7 +22,7 @@ export default function FilterBar({ filters, updateFilter, resetFilters }) {
       {/* Search */}
       <div className="relative flex-1 min-w-[200px] max-w-sm">
         <svg
-          className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none"
+          className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#64748b] pointer-events-none"
           fill="none"
           viewBox="0 0 24 24"
           strokeWidth={2}
@@ -37,7 +37,7 @@ export default function FilterBar({ filters, updateFilter, resetFilters }) {
         <Input
           id="filter-search"
           placeholder="Search tickets..."
-          className="pl-9 h-9"
+          className="pl-9 h-9 border-[#f4aeba] bg-white text-[#0f172a] focus-visible:ring-[#c54c82]"
           value={filters.search}
           onChange={(e) => updateFilter("search", e.target.value)}
         />
@@ -48,10 +48,10 @@ export default function FilterBar({ filters, updateFilter, resetFilters }) {
         value={filters.status || "all"}
         onValueChange={(v) => updateFilter("status", v === "all" ? "" : v)}
       >
-        <SelectTrigger id="filter-status" className="w-[140px] h-9" suppressHydrationWarning>
+        <SelectTrigger id="filter-status" className="w-[140px] h-9 border-[#f4aeba] bg-white text-[#0f172a]" suppressHydrationWarning>
           <SelectValue placeholder="Status" />
         </SelectTrigger>
-        <SelectContent>
+        <SelectContent className="bg-white border-[#f4aeba]">
           <SelectItem value="all">All statuses</SelectItem>
           {STATUSES.map((s) => (
             <SelectItem key={s} value={s}>
@@ -66,10 +66,10 @@ export default function FilterBar({ filters, updateFilter, resetFilters }) {
         value={filters.priority || "all"}
         onValueChange={(v) => updateFilter("priority", v === "all" ? "" : v)}
       >
-        <SelectTrigger id="filter-priority" className="w-[120px] h-9" suppressHydrationWarning>
+        <SelectTrigger id="filter-priority" className="w-[120px] h-9 border-[#f4aeba] bg-white text-[#0f172a]" suppressHydrationWarning>
           <SelectValue placeholder="Priority" />
         </SelectTrigger>
-        <SelectContent>
+        <SelectContent className="bg-white border-[#f4aeba]">
           <SelectItem value="all">All priorities</SelectItem>
           {PRIORITIES.map((p) => (
             <SelectItem key={p} value={p}>
@@ -84,10 +84,10 @@ export default function FilterBar({ filters, updateFilter, resetFilters }) {
         value={filters.category || "all"}
         onValueChange={(v) => updateFilter("category", v === "all" ? "" : v)}
       >
-        <SelectTrigger id="filter-category" className="w-[160px] h-9" suppressHydrationWarning>
+        <SelectTrigger id="filter-category" className="w-[160px] h-9 border-[#f4aeba] bg-white text-[#0f172a]" suppressHydrationWarning>
           <SelectValue placeholder="Category" />
         </SelectTrigger>
-        <SelectContent>
+        <SelectContent className="bg-white border-[#f4aeba]">
           <SelectItem value="all">All categories</SelectItem>
           {CATEGORIES.map((c) => (
             <SelectItem key={c} value={c}>
@@ -102,10 +102,10 @@ export default function FilterBar({ filters, updateFilter, resetFilters }) {
         value={filters.triage_decision || "all"}
         onValueChange={(v) => updateFilter("triage_decision", v === "all" ? "" : v)}
       >
-        <SelectTrigger id="filter-triage" className="w-[160px] h-9" suppressHydrationWarning>
+        <SelectTrigger id="filter-triage" className="w-[160px] h-9 border-[#f4aeba] bg-white text-[#0f172a]" suppressHydrationWarning>
           <SelectValue placeholder="Triage" />
         </SelectTrigger>
-        <SelectContent>
+        <SelectContent className="bg-white border-[#f4aeba]">
           <SelectItem value="all">All triage</SelectItem>
           {TRIAGE_OPTIONS.map((o) => (
             <SelectItem key={o.value} value={o.value}>
@@ -118,9 +118,9 @@ export default function FilterBar({ filters, updateFilter, resetFilters }) {
       {/* Reset */}
       <Button
         id="filter-reset"
-        variant="ghost"
+        variant="outline"
         size="sm"
-        className="text-muted-foreground"
+        className="border-[#f4aeba] text-[#c54c82] hover:bg-[#f4aeba]/20 hover:text-[#c54c82]"
         onClick={resetFilters}
       >
         Clear

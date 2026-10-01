@@ -91,7 +91,7 @@ function TicketDashboard() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen bg-white">
       <DashboardHeader />
 
       <main className="flex-1 mx-auto w-full max-w-[1600px] px-6 py-6 space-y-5">
@@ -107,12 +107,12 @@ function TicketDashboard() {
 
         {/* Error */}
         {error && (
-          <div className="flex items-center gap-2 rounded-lg border border-red-500/30 bg-red-500/5 px-4 py-3 text-sm text-red-400">
-            <svg className="h-4 w-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+          <div className="flex items-center gap-2 rounded-lg border border-red-300 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
+            <svg className="h-4 w-4 flex-shrink-0 text-red-600" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
             </svg>
             {error}
-            <button className="ml-auto underline underline-offset-2" onClick={handleRefresh}>
+            <button className="ml-auto font-bold underline underline-offset-2 hover:text-red-900" onClick={handleRefresh}>
               Retry
             </button>
           </div>

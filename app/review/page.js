@@ -44,20 +44,20 @@ export default function ReviewPage() {
     : tickets.filter((t) => t.review_reason === filterReason);
 
   return (
-    <div className="mx-auto max-w-[1600px] px-6 py-8 space-y-6">
+    <div className="mx-auto max-w-[1600px] px-6 py-8 space-y-6 bg-white min-h-screen">
       {/* Top Banner */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 rounded-xl border border-amber-500/20 bg-amber-500/5 p-6 backdrop-blur-sm">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 rounded-xl border border-[#f4aeba] bg-[#fdfdcb] p-6 shadow-xs">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
             <span className="text-xl">⚠️</span>
-            <h1 className="text-xl font-bold tracking-tight text-foreground">
+            <h1 className="text-xl font-bold tracking-tight text-[#0f172a]">
               Manual Triage Review Queue
             </h1>
-            <Badge className="bg-amber-500/20 text-amber-400 border-amber-500/30 font-mono">
+            <Badge className="bg-[#c54c82] text-white border-none font-bold">
               {total} Pending Review
             </Badge>
           </div>
-          <p className="text-xs text-muted-foreground">
+          <p className="text-xs text-[#64748b] font-medium">
             Tickets in this queue were flagged by the AI for low confidence, empty content, or safety policy checks.
           </p>
         </div>
@@ -67,12 +67,12 @@ export default function ReviewPage() {
             variant="outline"
             size="sm"
             onClick={() => fetchReviewTickets(page)}
-            className="gap-2 border-border/60 hover:bg-accent"
+            className="gap-2 border-[#f4aeba] text-[#0f172a] hover:bg-[#f4aeba]/20 font-medium"
           >
             🔄 Refresh Queue
           </Button>
           <Link href="/tickets">
-            <Button size="sm" className="bg-violet-600 hover:bg-violet-700 text-white">
+            <Button size="sm" className="bg-[#c54c82] hover:bg-[#ec729c] text-white font-semibold shadow-xs">
               All Tickets →
             </Button>
           </Link>
@@ -80,7 +80,7 @@ export default function ReviewPage() {
       </div>
 
       {/* Filter by review reason tabs */}
-      <div className="flex flex-wrap gap-2 pt-2 border-b border-border/40 pb-4">
+      <div className="flex flex-wrap gap-2 pt-2 border-b border-[#f4aeba] pb-4">
         {[
           { id: "all", label: "All Flagged" },
           { id: "flagged_input", label: "Prompt Injection / Security" },
@@ -90,13 +90,13 @@ export default function ReviewPage() {
         ].map((tab) => (
           <Button
             key={tab.id}
-            variant={filterReason === tab.id ? "default" : "ghost"}
+            variant={filterReason === tab.id ? "default" : "outline"}
             size="sm"
             onClick={() => setFilterReason(tab.id)}
             className={
               filterReason === tab.id
-                ? "bg-amber-500/20 text-amber-400 hover:bg-amber-500/30 border border-amber-500/30"
-                : "text-muted-foreground hover:bg-accent"
+                ? "bg-[#c54c82] text-white hover:bg-[#ec729c] border-[#c54c82] font-semibold"
+                : "border-[#f4aeba] text-[#0f172a] hover:bg-[#f4aeba]/20 font-medium"
             }
           >
             {tab.label}
